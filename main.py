@@ -4,13 +4,13 @@ import pygame
 import requests
 
 response = None
-z = 10  # масштаб
+z = 14  # масштаб
+print("Масштаб изменяется по нажатию на W и S")
 coordinates = input("Введите координаты(через запятую и без пробелов):\n")
 map_params = {
     "l": "map",
     "ll": coordinates,
-    "spn": "0.002,0.002",
-    "z": z
+    "z": str(z)
 }
 
 map_api_server = "http://static-maps.yandex.ru/1.x/"
@@ -32,33 +32,29 @@ screen.blit(pygame.image.load(map_file), (0, 0))
 pygame.display.flip()
 while pygame.event.wait().type != pygame.QUIT:
     nz = z
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        elif event.type == pygame.KEYUP:
-            print("ddd")
-            if event.key == pygame.K_DOWN:
-                print("down")
-                nz -= 1
-                nz = max(nz, 1)
-            elif event.key == pygame.K_UP:
-                print("up")
-                nz += 1
-                nz = min(nz, 17)
-    print(nz)
+    keys = pygame.key.get_pressed()
+
+    if keys[pygame.K_s]:
+        nz -= 1
+        nz = max(nz, 0)
+    elif keys[pygame.K_w]:
+        nz += 1
+        nz = min(nz, 17)
+
     if nz != z:
         z = nz
         map_params = {
             "l": "map",
             "ll": coordinates,
-            "spn": "0.002,0.002",
             "z": z
         }
         map_api_server = "http://static-maps.yandex.ru/1.x/"
+        os.remove(map_file)
         response = requests.get(map_api_server, params=map_params)
         map_file = "map.png"
         with open(map_file, "wb") as file:
             file.write(response.content)
+        screen.fill("black")
         screen.blit(pygame.image.load(map_file), (0, 0))
         pygame.display.flip()
 pygame.quit()
