@@ -30,9 +30,12 @@ pygame.init()
 screen = pygame.display.set_mode((600, 450))
 screen.blit(pygame.image.load(map_file), (0, 0))
 pygame.display.flip()
+types_map = ["map", "sat", "sat,skl"]
+count = 0
 while pygame.event.wait().type != pygame.QUIT:
     nz = z
     ncoordinates = coordinates
+    ncount = count
     keys = pygame.key.get_pressed()
     ncoordinates = [float(i) for i in ncoordinates.split(",")]
     if keys[pygame.K_s]:
@@ -50,10 +53,13 @@ while pygame.event.wait().type != pygame.QUIT:
             ncoordinates[0] -= 10000 * (1 / nz) ** 5
         if keys[pygame.K_RIGHT]:
             ncoordinates[0] += 10000 * (1 / nz) ** 5
+    if keys[pygame.K_LCTRL]:
+        ncount = (ncount + 1) % 3
     ncoordinates = ",".join([str(i) for i in ncoordinates])
-    if nz != z or ncoordinates != coordinates:
+    if nz != z or ncoordinates != coordinates or count != ncount:
+        count = ncount
         map_params = {
-            "l": "map",
+            "l": types_map[count],
             "ll": ncoordinates,
             "z": nz
         }
