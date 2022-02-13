@@ -104,6 +104,8 @@ while running:
                     ncoordinates[0] -= 10000 * (1 / nz) ** 5
                 if event.key == pygame.K_RIGHT:
                     ncoordinates[0] += 10000 * (1 / nz) ** 5
+            if event.key == pygame.K_LCTRL:
+                ncount = (ncount + 1) % 3
     ncoordinates = ",".join([str(i) for i in ncoordinates])
     if nz != z or ncoordinates != coordinates or count != ncount or res_text != "":
         if res_text != "":
